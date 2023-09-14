@@ -1,9 +1,11 @@
 package main;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
 
 public class GUI extends JFrame implements ActionListener {
 
@@ -16,6 +18,8 @@ public class GUI extends JFrame implements ActionListener {
 	JTextField userDay, userMonth, userYear;
 
 	JButton getAge;
+	
+	JDialog copyMessage;
 
 	public GUI() {
 
@@ -105,6 +109,22 @@ public class GUI extends JFrame implements ActionListener {
 		//-------------------Output Section-------------------//
 
 		
+		//-----------Error Dialog ----------------------------//
+		JLabel msg = new JLabel("<html><center>Error !! Please enter a valid date</center></html>");
+		msg.setFont(new Font("verdana", Font.BOLD,20));
+		msg.setForeground(new Color(218, 112, 214));
+        msg.setBounds(20, 10, 200, 30);
+        
+        copyMessage = new JDialog();
+        copyMessage.setSize(new Dimension(500,300));
+        copyMessage.setLocationRelativeTo(this);
+        copyMessage.setLayout(new GridBagLayout());
+        copyMessage.getContentPane().setBackground(Color.white);
+        copyMessage.setResizable(false);
+        copyMessage.add(msg);
+        copyMessage.setModal(true);
+        copyMessage.setVisible(false);
+		
 
 		
 		//------------------ Frame styling ------------------//
@@ -122,15 +142,29 @@ public class GUI extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
-		int setYear = Integer.parseInt(userYear.getText());
-		int setMonth = Integer.parseInt(userMonth.getText());
-		int setDay = Integer.parseInt(userDay.getText());
+		try {
+			int setYear = Integer.parseInt(userYear.getText());
+			int setMonth = Integer.parseInt(userMonth.getText());
+			int setDay = Integer.parseInt(userDay.getText());
+			
+			LocalDate dateNow =LocalDate.now();
+			
+			
+
+			if(setMonth > 12|| setMonth < 1 || setDay > 31 || setDay < 1 || setYear > dateNow.getYear() || setYear < 1900) {
+	            copyMessage.setVisible(true);
+			}else {
+				int arr[] = new AgeCalculator().AgeCalculatorMethod(setDay, setMonth, setYear);
+				
+				currentYear.setText(arr[2] + " Years");
+				currentMonth.setText(arr[1] + " Months");
+				currentDay.setText(arr[0] + " Days");
+			}
+		} catch (Exception e2) {
+            copyMessage.setVisible(true);
+		}
 		
-		int arr[] = new AgeCalculator().AgeCalculatorMethod(setDay, setMonth, setYear);
 		
-		currentYear.setText(arr[2] + " Years");
-		currentMonth.setText(arr[1] + " Months");
-		currentDay.setText(arr[0] + " Days");
 		
 	}
 
